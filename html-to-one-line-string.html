@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML to One-Line JS String Converter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            margin-bottom: 10px;
+            font-family: monospace;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .output {
+            margin-top: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            background-color: #f9f9f9;
+        }
+        .copy-success {
+            color: green;
+            margin-left: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>HTML to One-Line JavaScript String Converter</h1>
+    <p>Options:</p>
+    <div>
+        <input type="checkbox" id="removeSpacing" checked>
+        <label for="removeSpacing">Remove spacing between tags</label>
+    </div>
+    
+    <h2>Input HTML</h2>
+    <textarea id="htmlInput" placeholder="Paste your HTML here"></textarea>
+    
+    <div>
+        <button id="convertBtn">Convert to JS String</button>
+        <button id="copyBtn" disabled>Copy to Clipboard</button>
+        <span id="copySuccess" class="copy-success">Copied!</span>
+    </div>
+    
+    <h2>Output JavaScript String</h2>
+    <div class="output">
+        <p>Length: <span id="outputLength">0</span> characters</p>
+        <textarea id="jsOutput" readonly placeholder="JS string will appear here"></textarea>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const htmlInput = document.getElementById('htmlInput');
+            const jsOutput = document.getElementById('jsOutput');
+            const convertBtn = document.getElementById('convertBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const copySuccess = document.getElementById('copySuccess');
+            const outputLength = document.getElementById('outputLength');
+            
+            // Convert HTML to JS string
+            convertBtn.addEventListener('click', function() {
+                const html = htmlInput.value;
+                const removeSpacingOption = document.getElementById('removeSpacing').checked;
+                
+                if (!html.trim()) {
+                    alert('Please enter some HTML first');
+                    return;
+                }
+                
+                // Replace all newlines with empty strings
+                let oneLine = html.replace(/\n/g, '');
+                
+                if (removeSpacingOption) {
+                    // Remove whitespace between tags
+                    oneLine = oneLine.replace(/>\s+</g, '><');
+                    
+                    // Remove extra spaces
+                    oneLine = oneLine.replace(/\s{2,}/g, ' ');
+                }
+                
+                // Replace all double quotes with escaped double quotes
+                oneLine = oneLine.replace(/"/g, '\\"');
+                
+                // Create the final JS string
+                const jsString = `"${oneLine}"`;
+                
+                // Update output
+                jsOutput.value = jsString;
+                outputLength.textContent = jsString.length;
+                copyBtn.disabled = false;
+            });
+            
+            // Copy to clipboard
+            copyBtn.addEventListener('click', function() {
+                jsOutput.select();
+                document.execCommand('copy');
+                
+                // Show success message
+                copySuccess.style.display = 'inline';
+                setTimeout(function() {
+                    copySuccess.style.display = 'none';
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
